@@ -1,0 +1,130 @@
+:root {
+  --bg: #f5f6f8;
+  --card: #ffffff;
+  --border: #e2e5ea;
+  --text: #1f2328;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --danger: #dc2626;
+  --done: #9ca3af;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 640px;
+  margin: 48px auto;
+  padding: 0 16px;
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0 0 24px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+form.add-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+button {
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+}
+
+.btn-add {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-add:hover { background: var(--accent-hover); }
+
+ul.todo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+li.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+li.todo-item:last-child { border-bottom: none; }
+
+.todo-title {
+  flex: 1;
+  font-size: 1rem;
+}
+
+.todo-item.done .todo-title {
+  text-decoration: line-through;
+  color: var(--done);
+}
+
+.toggle {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.btn-delete {
+  background: transparent;
+  color: var(--danger);
+  padding: 6px 10px;
+  font-size: 0.85rem;
+}
+
+.btn-delete:hover {
+  background: rgba(220,38,38,0.08);
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 24px 0;
+}

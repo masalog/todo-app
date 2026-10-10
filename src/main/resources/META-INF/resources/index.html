@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo アプリ (Quarkus + htmx)</title>
+
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/htmx.min.js"></script>
+  <script src="/websocket.js" defer></script>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Todo</h1>
+    <p class="subtitle">Quarkus + htmx — 通常の HTML / CSS で作成</p>
+
+    <div class="card">
+
+      <!-- 追加フォーム -->
+      <form class="add-form"
+            hx-post="/web/todos"
+            hx-target="#todo-list"
+            hx-swap="innerHTML"
+            hx-on::after-request="this.reset()">
+
+        <input type="text"
+               name="title"
+               placeholder="やることを入力…"
+               required
+               autocomplete="off">
+
+        <button type="submit" class="btn-add">追加</button>
+      </form>
+
+      <!-- 一覧 -->
+      <ul id="todo-list"
+          class="todo-list"
+          hx-get="/web/todos"
+          hx-trigger="load, refresh"
+          hx-swap="innerHTML">
+      </ul>
+
+    </div>
+  </div>
+</body>
+</html>
