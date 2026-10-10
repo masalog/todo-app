@@ -8,8 +8,7 @@ import java.util.List;
  * Todo を htmx 用の HTML 断片に描画する View 層の契約（インターフェース）。
  *
  * Resource はこのインターフェースに依存する。実装は {@link TodoHtmlRendererImpl}。
- * 描画方式を差し替えられるよう（将来テンプレートエンジン化する等）、
- * また他の層（Repository / Service）と一貫させるためインターフェースとして定義する。
+ * 他の層（Repository / Service）と一貫させるためインターフェースとして定義する。
  */
 public interface TodoHtmlRenderer {
 
