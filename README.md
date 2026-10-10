@@ -2,78 +2,90 @@
 
 Quarkus・HTMX・H2 を使って作ったシンプルな Todo アプリです。
 
-Todo の追加・完了・削除ができます。
+Todo の追加・完了・削除ができ、データは H2 Database に保存されるため、アプリを再起動しても内容は保持されます。
 
-データは H2 Database に保存されるため、アプリを再起動しても内容は保持されます。
+WebSocketを実装しており、複数端末からリアルタイムで H2 Database にアクセスできます。
 
----
-
-# 🎯 できること
+## 🎯 できること
 
 - ➕ Todo追加
 - ✅ 完了チェック
 - 🗑️ Todo削除
 - 💾 データ保存
 - ⚡ ページリロード不要
+- 🔄 WebSocketによるリアルタイム更新
 
----
-
-# 🛠️ 使用技術
+## 🛠️ 使用技術
 
 - ☕ Java 21
-- 🚀 Quarkus
+- 🚀 Quarkus 3.28
 - ⚡ HTMX
+- 🔌 WebSocket
 - 🗄️ Hibernate ORM Panache
 - 💾 H2 Database
-- 🧪 Mockito / RestAssured
+- 🧪 JUnit5
+- 🎭 Mockito
+- ✅ RestAssured
 
----
+## 📂 フォルダ構成
 
-# 🖥️ デスクトップから起動
-
-毎回 URL を入力する代わりに、Windows のデスクトップにショートカットを作成しておくと便利です。
- 
-## 作成手順
- 
-① デスクトップで右クリック
- 
 ```text
-新規作成
-↓
-ショートカット
+todo-app
+├─ .gitignore
+├─ README.md
+├─ pom.xml
+├─ src
+│  ├─ main
+│  │  ├─ java
+│  │  │  └─ com/example/todo
+│  │  │     ├─ domain
+│  │  │     │  └─ Todo.java
+│  │  │     ├─ repository
+│  │  │     │  └─ TodoRepository.java
+│  │  │     ├─ service
+│  │  │     │  ├─ NotificationService.java
+│  │  │     │  ├─ NotificationServiceImpl.java
+│  │  │     │  ├─ TodoService.java
+│  │  │     │  └─ TodoServiceImpl.java
+│  │  │     ├─ web
+│  │  │     │  ├─ TodoHtmlRenderer.java
+│  │  │     │  ├─ TodoHtmlRendererImpl.java
+│  │  │     │  └─ TodoWebResource.java
+│  │  │     └─ websocket
+│  │  │        ├─ SessionManager.java
+│  │  │        ├─ TodoEndpoint.java
+│  │  │        └─ TodoWebSocket.java
+│  │  └─ resources
+│  │     ├─ application.properties
+│  │     └─ META-INF
+│  │        └─ resources
+│  │           ├─ htmx.min.js
+│  │           ├─ index.html
+│  │           ├─ styles.css
+│  │           └─ websocket.js
+│  └─ test
+│     ├─ java
+│     │  └─ com/example/todo
+│     │     ├─ TodoWebResourceTest.java
+│     │     ├─ service
+│     │     │  ├─ NotificationServiceImplTest.java
+│     │     │  └─ TodoServiceImplTest.java
+│     │     └─ websocket
+│     │        ├─ SessionManagerTest.java
+│     │        ├─ TodoEndpointTest.java
+│     │        └─ TodoWebSocket.java
+│     └─ resources
+│        └─ application.properties
+└─ data
+   ├─ todo.mv.db
+   └─ todo.trace.db
 ```
- 
-② 項目の場所に次を入力
- 
-```text
-http://localhost:8081/
-```
- 
-③ ショートカット名を入力
- 
-```text
-Todo
-```
- 
-④ 完了を押す
- 
-するとデスクトップに
- 
-```text
-Todo
-```
- 
-のアイコンが作成されます。
 
-※事前にアプリを起動しておく必要があります。
+## 🚀 起動方法
 
----
+### 開発モード
 
-# 🚀 起動方法
-
-開発モード
-
-```powershell
+```bash
 mvn quarkus:dev
 ```
 
@@ -83,37 +95,22 @@ mvn quarkus:dev
 http://localhost:8081/
 ```
 
----
-
-# 📦 JAR作成
-
-```powershell
-mvn clean package
-```
-
-生成
-
-```text
-target/
-└─ todo-app-1.0.0-SNAPSHOT-runner.jar
-```
-
-実行
-
-```powershell
-java -jar target\todo-app-1.0.0-SNAPSHOT-runner.jar
-```
-
----
-
-# 💾 データ保存先
+## 💾 データ保存先
 
 ```text
 data/
- ├─ todo.mv.db
- └─ todo.trace.db
+├─ todo.mv.db
+└─ todo.trace.db
 ```
 
 データをリセットしたい場合は削除してください。
 
----
+## 🧪 テスト実行
+
+```bash
+mvn test
+```
+
+## 📄 ライセンス
+
+MIT License
