@@ -65,10 +65,10 @@
             <artifactId>quarkus-hibernate-orm-panache</artifactId>
         </dependency>
 
-        <!-- H2 Database -->
+        <!-- PostgreSQL -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jdbc-h2</artifactId>
+            <artifactId>quarkus-jdbc-postgresql</artifactId>
         </dependency>
 
         <!-- Lombok: ボイラープレート削減（getter/setter/コンストラクタ自動生成）。
