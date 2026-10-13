@@ -17,8 +17,8 @@ target/
 # OS
 .DS_Store
 
-# H2 Database
-data/
-
 # Logs
 *.log
+
+.env
+.env.*
