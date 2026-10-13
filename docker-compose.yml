@@ -11,7 +11,7 @@ services:
   postgres-test:
     image: postgres:17
     env_file:
-      - .env
+      - .env.test
     ports:
       - "5433:5432"
     volumes:
