@@ -141,7 +141,7 @@ docker compose ps
 ## 🌐 アクセス
 
 ```text
-http://localhost:8080
+http://localhost:8081
 ```
 
 ---
@@ -169,7 +169,7 @@ docker compose up -d --build
 アプリケーションログ
 
 ```bash
-docker compose logs -f app
+docker compose logs -f todo-app
 ```
 
 PostgreSQLログ
