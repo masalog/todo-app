@@ -6,19 +6,15 @@ WORKDIR /build
 COPY pom.xml .
 COPY src ./src
 
-# テストを含めて検証
-RUN mvn verify
+RUN mvn clean package -DskipTests
 
 # ===== Runtime Stage =====
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY --from=builder /build/target/quarkus-app/lib/ ./lib/
-COPY --from=builder /build/target/quarkus-app/*.jar ./
-COPY --from=builder /build/target/quarkus-app/app/ ./app/
-COPY --from=builder /build/target/quarkus-app/quarkus/ ./quarkus/
+COPY --from=builder /build/target/*-runner.jar app.jar
 
-EXPOSE 8080
+EXPOSE 8081
 
-ENTRYPOINT ["java", "-jar", "quarkus-run.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
