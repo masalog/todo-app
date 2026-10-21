@@ -16,7 +16,6 @@ import java.util.Optional;
 public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository repository;
-    private final NotificationService notificationService; // ★ WebSocket を知らない
 
     @Override
     public List<Todo> findAll() {
@@ -41,9 +40,6 @@ public class TodoServiceImpl implements TodoService {
 
         repository.persist(todo);
 
-        // ★ WebSocket を知らずに「通知」だけ呼ぶ
-        notificationService.notifyCreated(todo.getId());
-
         return todo;
     }
 
@@ -59,8 +55,6 @@ public class TodoServiceImpl implements TodoService {
 
         todo.setCompleted(!todo.isCompleted());
 
-        notificationService.notifyToggled(id);
-
         return Optional.of(todo);
     }
 
@@ -69,10 +63,6 @@ public class TodoServiceImpl implements TodoService {
     public boolean delete(Long id) {
 
         boolean deleted = repository.deleteById(id);
-
-        if (deleted) {
-            notificationService.notifyDeleted(id);
-        }
 
         return deleted;
     }
