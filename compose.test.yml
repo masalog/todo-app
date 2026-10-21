@@ -11,6 +11,12 @@ services:
       - postgres-test-data:/var/lib/postgresql/data
     networks:
       - test-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   test-runner:
     image: maven:3.9.11-eclipse-temurin-21
@@ -20,7 +26,8 @@ services:
     env_file:
       - .env.test
     depends_on:
-      - postgres-test
+      postgres-test:
+        condition: service_healthy
     command: mvn test
     networks:
       - test-net
