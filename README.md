@@ -1,107 +1,371 @@
 # Todoアプリ
 
-Quarkus・HTMX・WebSocket・PostgreSQL を利用したリアルタイム対応の Todo アプリケーションです。  
+Quarkus・HTMX・WebSocket・PostgreSQL を利用したリアルタイム対応の Todo アプリケーションです。
+
 Todo の追加・完了・削除がリアルタイムで全クライアントへ反映されます ⚡
 
 ---
 
-## 🚀 アプリケーション起動方法
+# 🏗️ Docker構成
 
-### リポジトリ取得
+本プロジェクトでは、本番環境とテスト環境を完全に分離しています。
 
-    git clone https://github.com/masalog/todo-app.git
-    cd todo-app
+## 本番環境
 
-### Docker Composeで起動
+```text
+compose.prod.yml
+│
+├─ todo-prod-todo-app-1
+└─ todo-prod-postgres-1
+```
 
-    docker compose up -d
+## テスト環境
 
----
+```text
+compose.test.yml
+│
+├─ todo-test-postgres-test-1
+└─ test-runner（実行時のみ）
+```
 
-## 🌐 アクセス
+## 環境分離
 
-    http://localhost:8081
-
----
-
-## 🛑 停止
-
-    docker compose down
-
----
-
-## 🔄 再ビルド
-
-    docker compose up -d --build
-
----
-
-## 🧪 テスト用DBの準備
-
-テストはローカルの PostgreSQL（5433）に接続して実行されます。  
-そのため、テスト用DBの環境変数ファイルとコンテナ起動が必要です。
-
-### 1. `.env.test` を作成する
-
-プロジェクト直下に `.env.test` を作成し、以下を記述します。
-
-    POSTGRES_DB=tododb_test
-    POSTGRES_USER=test_user
-    POSTGRES_PASSWORD=test_pass
-
-※ `src/test/resources/application.properties` の設定と一致している必要があります。
-
-### 2. テスト用 PostgreSQL コンテナを起動する
-
-    docker compose up -d postgres-test
-
-起動後、テスト用DBは `localhost:5433` で待ち受けます。
+| 環境 | Project | DB | User | Network |
+|--------|--------|--------|--------|--------|
+| 本番 | todo-prod | tododb | todo | todo_prod_network |
+| テスト | todo-test | tododb_test | todo_test | todo_test_network |
 
 ---
 
-## 🧪 テストの実行方法
+# ⚙️ 環境変数ファイルの準備
 
-Docker Compose が起動している状態で Maven を実行するだけでテストできます。
+本プロジェクトでは `.env` および `.env.test` は Git 管理対象外です。
 
-    docker compose up -d
-    mvn test
+アプリケーション起動前に、プロジェクトルートへ以下のファイルを作成してください。
+
+```text
+.env
+.env.test
+```
+
+## .env
+
+以下の環境変数を定義してください。
+
+```text
+POSTGRES_USER
+POSTGRES_PASSWORD
+POSTGRES_DB
+
+QUARKUS_DATASOURCE_USERNAME
+QUARKUS_DATASOURCE_PASSWORD
+QUARKUS_DATASOURCE_JDBC_URL
+```
+
+### JDBC URL
+
+```text
+jdbc:postgresql://postgres:5432/<database_name>
+```
+
+| 項目 | 説明 |
+|--------|--------|
+| postgres | compose.prod.yml の PostgreSQL サービス名 |
+| 5432 | PostgreSQL コンテナのポート |
+| database_name | 接続先データベース名 |
 
 ---
 
-## 📋 ログ確認
+## .env.test
+
+以下の環境変数を定義してください。
+
+```text
+POSTGRES_USER
+POSTGRES_PASSWORD
+POSTGRES_DB
+
+QUARKUS_DATASOURCE_USERNAME
+QUARKUS_DATASOURCE_PASSWORD
+QUARKUS_DATASOURCE_JDBC_URL
+```
+
+### JDBC URL
+
+```text
+jdbc:postgresql://postgres-test:5432/<database_name>
+```
+
+| 項目 | 説明 |
+|--------|--------|
+| postgres-test | compose.test.yml の PostgreSQL サービス名 |
+| 5432 | PostgreSQL コンテナのポート |
+| database_name | 接続先データベース名 |
+
+> **注意**
+>
+> Docker コンテナ内では `localhost` はコンテナ自身を指します。
+>
+> PostgreSQL へ接続する場合は、以下のサービス名を利用してください。
+>
+> 本番:
+>
+> ```text
+> postgres
+> ```
+>
+> テスト:
+>
+> ```text
+> postgres-test
+> ```
+
+---
+
+# 🚀 アプリケーション起動方法
+
+## リポジトリ取得
+
+```bash
+git clone https://github.com/masalog/todo-app.git
+cd todo-app
+```
+
+## 本番環境起動
+
+```bash
+docker compose -f compose.prod.yml up -d --build
+```
+
+起動確認:
+
+```bash
+docker compose -f compose.prod.yml ps
+```
+
+正常時:
+
+```text
+todo-prod-postgres-1   Up (healthy)
+todo-prod-todo-app-1   Up (healthy)
+```
+
+---
+
+# 🌐 アクセス
+
+```text
+http://localhost:8081
+```
+
+---
+
+# ❤️ ヘルスチェック
+
+## PostgreSQL
+
+確認:
+
+```bash
+docker compose -f compose.prod.yml ps
+```
+
+例:
+
+```text
+todo-prod-postgres-1   Up (healthy)
+```
+
+---
+
+## Quarkus
+
+健全性確認:
+
+```bash
+curl http://localhost:8081/q/health
+```
+
+レスポンス例:
+
+```json
+{
+  "status": "UP",
+  "checks": [
+    {
+      "name": "Database connections health check",
+      "status": "UP"
+    }
+  ]
+}
+```
+
+---
+
+# 🧪 テスト環境
+
+## テスト用DB起動
+
+テスト実行前に PostgreSQL を起動します。
+
+```bash
+docker compose -f compose.test.yml up -d postgres-test
+```
+
+状態確認:
+
+```bash
+docker compose -f compose.test.yml ps
+```
+
+正常時:
+
+```text
+todo-test-postgres-test-1   Up (healthy)
+```
+
+---
+
+## テスト実行
+
+テスト実行専用コンテナ (`test-runner`) を利用します。
+
+```bash
+docker compose -f compose.test.yml run --rm test-runner
+```
+
+成功例:
+
+```text
+Tests run: 22, Failures: 0, Errors: 0, Skipped: 0
+
+BUILD SUCCESS
+```
+
+### test-runnerについて
+
+`test-runner` は常駐しません。
+
+```text
+コンテナ作成
+↓
+mvn test 実行
+↓
+テスト結果出力
+↓
+コンテナ削除 (--rm)
+```
+
+毎回クリーンな環境でテストが実行されます。
+
+---
+
+# 📋 ログ確認
 
 アプリケーションログ:
 
-    docker compose logs -f todo-app
+```bash
+docker compose -f compose.prod.yml logs -f todo-app
+```
 
 PostgreSQLログ:
 
-    docker compose logs -f postgres
+```bash
+docker compose -f compose.prod.yml logs -f postgres
+```
+
+テストDBログ:
+
+```bash
+docker compose -f compose.test.yml logs -f postgres-test
+```
 
 ---
 
-## ⚡ リアルタイム更新の確認
+# 🔄 再ビルド
 
-1. ブラウザを2つ開く  
-2. Todoを追加  
-3. もう片方の画面へ即時反映されることを確認  
-4. 完了・削除もリアルタイム同期
-
----
-
-## 📈 今後の拡張候補
-
-- ログイン機能  
-- ユーザー別Todo管理  
-- タグ機能  
-- Todo検索機能  
-- レスポンシブ対応強化  
-- ダッシュボード機能  
+```bash
+docker compose -f compose.prod.yml up -d --build
+```
 
 ---
 
-## 👨‍💻 開発者
+# 🛑 停止
 
-学習・ポートフォリオ用のプロジェクトです。  
-Java・Quarkus・HTMX・WebSocket・PostgreSQL を利用し、  
-モダンなリアルタイムWebアプリケーションの実装を目的としています。
+本番環境停止:
+
+```bash
+docker compose -f compose.prod.yml down
+```
+
+テスト環境停止:
+
+```bash
+docker compose -f compose.test.yml down
+```
+
+本番・テスト環境をすべて停止:
+
+```bash
+docker compose -f compose.prod.yml down
+docker compose -f compose.test.yml down
+```
+
+---
+
+# ⚡ リアルタイム更新確認
+
+1. ブラウザを2つ開く
+2. Todoを追加する
+3. もう片方の画面へ即時反映されることを確認する
+4. 完了・削除もリアルタイム同期されることを確認する
+
+---
+
+# 🔒 セキュリティ / 運用
+
+本プロジェクトでは以下を実施しています。
+
+- PostgreSQLポート非公開
+- 本番・テスト完全分離
+- Docker Network分離
+- Docker Volume分離
+- Database/User分離
+- 非rootユーザー実行
+- PostgreSQL Health Check
+- Quarkus Health Check
+- restart: unless-stopped
+- マルチステージビルド
+- テストランナー分離
+- Docker Health Check による起動順制御
+- 最小権限の原則に基づくコンテナ実行
+
+---
+
+# 📈 今後の拡張候補
+
+- ログイン機能
+- ユーザー別Todo管理
+- タグ機能
+- Todo検索機能
+- レスポンシブ対応強化
+- ダッシュボード機能
+- GitHub ActionsによるCI/CD
+- PostgreSQLバックアップ自動化
+
+---
+
+# 👨‍💻 開発者
+
+学習・ポートフォリオ用のプロジェクトです。
+
+技術スタック:
+
+- Java 21
+- Quarkus
+- HTMX
+- WebSocket
+- PostgreSQL
+- Docker Compose
+
+を利用し、モダンなリアルタイムWebアプリケーションの実装を目的としています。
