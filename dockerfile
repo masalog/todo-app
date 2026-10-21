@@ -17,7 +17,8 @@ WORKDIR /app
 
 COPY --from=builder /build/target/*-runner.jar app.jar
 
-RUN chown -R appuser:appuser /app
+RUN chown root:root app.jar \
+ && chmod 444 app.jar
 
 USER appuser
 
