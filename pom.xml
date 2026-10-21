@@ -47,12 +47,6 @@
             <artifactId>quarkus-rest-jackson</artifactId>
         </dependency>
 
-        <!-- WebSocket -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-websockets</artifactId>
-        </dependency>
-
         <!-- Bean validation -->
         <dependency>
             <groupId>io.quarkus</groupId>
