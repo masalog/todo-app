@@ -1,8 +1,8 @@
 # Todoアプリ
 
-Quarkus・HTMX・WebSocket・PostgreSQL を利用したリアルタイム対応の Todo アプリケーションです。
+Quarkus・HTMX・PostgreSQL を利用した Todo アプリケーションです。
 
-Todo の追加・完了・削除がリアルタイムで全クライアントへ反映されます ⚡
+Todo の追加・完了・削除が行えます ✅
 
 ---
 
@@ -313,15 +313,6 @@ docker compose -f compose.test.yml down
 
 ---
 
-# ⚡ リアルタイム更新確認
-
-1. ブラウザを2つ開く
-2. Todoを追加する
-3. もう片方の画面へ即時反映されることを確認する
-4. 完了・削除もリアルタイム同期されることを確認する
-
----
-
 # 🔒 セキュリティ / 運用
 
 本プロジェクトでは以下を実施しています。
@@ -364,8 +355,7 @@ docker compose -f compose.test.yml down
 - Java 21
 - Quarkus
 - HTMX
-- WebSocket
 - PostgreSQL
 - Docker Compose
 
-を利用し、モダンなリアルタイムWebアプリケーションの実装を目的としています。
+を利用し、モダンなWebアプリケーションの実装を目的としています。
