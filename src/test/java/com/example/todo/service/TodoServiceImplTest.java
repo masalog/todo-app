@@ -19,14 +19,12 @@ import static org.mockito.Mockito.*;
 class TodoServiceImplTest {
 
     private TodoRepository repository;
-    private NotificationService notificationService;
     private TodoServiceImpl service;
 
     @BeforeEach
     void setUp() {
         repository = mock(TodoRepository.class);
-        notificationService = mock(NotificationService.class); // ★ 追加
-        service = new TodoServiceImpl(repository, notificationService); // ★ 修正
+        service = new TodoServiceImpl(repository);
     }
 
     @Test
