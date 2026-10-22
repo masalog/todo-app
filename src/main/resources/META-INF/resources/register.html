@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ユーザー登録 | Todo アプリ</title>
+
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/htmx.min.js"></script>
+</head>
+
+<body>
+  <main class="container">
+    <h1>ユーザー登録</h1>
+    <p class="subtitle">アカウントを作成して Todo を利用しましょう。</p>
+
+    <section class="card" aria-label="ユーザー登録フォーム">
+      <form class="register-form"
+            hx-post="/web/users/register"
+            hx-target="#register-feedback"
+            hx-swap="innerHTML">
+        <label>
+          ユーザー名
+          <input type="text"
+                 name="username"
+                 placeholder="ユーザー名を入力"
+                 autocomplete="username"
+                 maxlength="255"
+                 required>
+        </label>
+
+        <label>
+          パスワード
+          <input type="password"
+                 name="password"
+                 placeholder="パスワードを入力"
+                 autocomplete="new-password"
+                 minlength="8"
+                 maxlength="72"
+                 required>
+        </label>
+
+        <button type="submit" class="btn-add">登録</button>
+      </form>
+
+      <div id="register-feedback" class="register-feedback" aria-live="polite"></div>
+      <p class="register-home"><a href="/login.html">アカウントをお持ちの方はこちら</a></p>
+      <p class="register-home"><a href="/">Todo のトップへ戻る</a></p>
+    </section>
+  </main>
+</body>
+</html>
