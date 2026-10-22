@@ -2,7 +2,7 @@ package com.example.todo.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import lombok.ToString;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,5 +37,6 @@ public class User {
 
     /** ハッシュ化されたパスワード */
     @Column(nullable = false)
+    @ToString.Exclude
     private String passwordHash;
 }
