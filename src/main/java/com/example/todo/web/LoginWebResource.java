@@ -25,6 +25,16 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.TEXT_HTML)
 public class LoginWebResource {
 
+    /**
+     * ユーザー名の存在有無による応答時間の差を減らすための
+     * ダミー BCrypt ハッシュ。
+     *
+     * ユーザーが存在しない場合でも BCrypt 検証を実行し、
+     * ユーザー列挙攻撃（User Enumeration）の難易度を上げる。
+     */
+    private static final String DUMMY_HASH =
+            "$2a$12$WBAUkSTbaPdF2oZTcaEWR.nM0GHs3gz1/AYsdS5MyP4S8i4p0fkhK";
+
     @Inject
     UserService service;
 
@@ -47,22 +57,59 @@ public class LoginWebResource {
             @FormParam("username") String username,
             @FormParam("password") String password) {
 
+        /*
+         * クライアント側の入力検証だけに依存せず、
+         * サーバー側でも入力値を検証する。
+         *
+         * null の場合でも BCrypt を実行できるよう、
+         * 空文字へ正規化する。
+         */
+        String safeUsername =
+                username != null ? username : "";
+
+        String safePassword =
+                password != null ? password : "";
+
         User user = service
-                .findByUsername(username)
+                .findByUsername(safeUsername)
                 .orElse(null);
 
-        if (user == null) {
-            return renderer.renderLoginFailed();
-        }
+        /*
+         * ユーザーが存在しない場合でもダミーハッシュに対して
+         * BCrypt 検証を実行する。
+         *
+         * これにより、
+         * 「存在するユーザー」
+         * 「存在しないユーザー」
+         * の応答時間の差を減らし、
+         * ユーザー名の推測を困難にする。
+         */
+        String hash =
+                user != null
+                        ? user.getPasswordHash()
+                        : DUMMY_HASH;
 
+        /*
+         * 常に BCrypt 検証を実行する。
+         */
         boolean verified =
                 BCrypt.verifyer()
                         .verify(
-                                password.toCharArray(),
-                                user.getPasswordHash())
+                                safePassword.toCharArray(),
+                                hash)
                         .verified;
 
-        if (!verified) {
+        /*
+         * ユーザー名未入力、
+         * パスワード未入力、
+         * ユーザー不存在、
+         * パスワード不一致
+         * のすべてを同一の認証失敗として扱う。
+         */
+        if (safeUsername.isBlank()
+                || safePassword.isBlank()
+                || user == null
+                || !verified) {
             return renderer.renderLoginFailed();
         }
 
