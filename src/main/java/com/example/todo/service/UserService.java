@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface UserService {
 
     /** ユーザー登録。 */
-    User create(String username, String password);
+    boolean create(String username, String password);
 
     /** ユーザー名で検索。 */
     Optional<User> findByUsername(String username);
