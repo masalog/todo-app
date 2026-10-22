@@ -1,6 +1,9 @@
 package com.example.todo.web;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+
+import java.nio.charset.StandardCharsets;
+
 import com.example.todo.domain.User;
 import com.example.todo.service.UserService;
 
@@ -70,6 +73,12 @@ public class LoginWebResource {
         String safePassword =
                 password != null ? password : "";
 
+        boolean tooLong =
+                safePassword.getBytes(StandardCharsets.UTF_8).length > 72;
+
+        char[] candidate =
+                tooLong ? new char[0] : safePassword.toCharArray();
+        
         User user = service
                 .findByUsername(safeUsername)
                 .orElse(null);
@@ -93,9 +102,11 @@ public class LoginWebResource {
          * 常に BCrypt 検証を実行する。
          */
         boolean verified =
-                BCrypt.verifyer()
+                BCrypt.verifyer(
+                        BCrypt.Version.VERSION_2A,
+                        at.favre.lib.crypto.bcrypt.LongPasswordStrategies.none())
                         .verify(
-                                safePassword.toCharArray(),
+                                candidate,
                                 hash)
                         .verified;
 
@@ -108,6 +119,7 @@ public class LoginWebResource {
          */
         if (safeUsername.isBlank()
                 || safePassword.isBlank()
+                || tooLong
                 || user == null
                 || !verified) {
             return renderer.renderLoginFailed();
