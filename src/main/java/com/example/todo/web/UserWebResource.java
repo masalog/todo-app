@@ -12,7 +12,8 @@ import jakarta.ws.rs.core.MediaType;
 /**
  * htmx 用のユーザー関連 Web エンドポイント。
  *
- * このクラスは HTTP の入出力（パラメータ受け取り・レスポンス返却）
+ * このクラスは HTTP の入出力
+ * （パラメータ受け取り・レスポンス返却）
  * のみを担当する。
  *
  * ビジネスロジックは UserService に、
@@ -42,11 +43,28 @@ public class UserWebResource {
             @FormParam("username") String username,
             @FormParam("password") String password) {
 
-        if (service.findByUsername(username).isPresent()) {
+        /*
+         * htmx が 4xx 応答を通常は差し替えないため、
+         * 入力エラーも HTML の成功応答として返す。
+         */
+        if (username == null || username.isBlank()
+                || username.length() > 255
+                || password == null
+                || password.isBlank()
+                || password.length() < 8
+                || password.length() > 72) {
             return renderer.renderRegisterFailed();
         }
 
-        service.create(username, password);
+        /*
+         * 登録処理を実行する。
+         *
+         * ユーザー名重複や競合により登録できなかった場合は
+         * 登録失敗として扱う。
+         */
+        if (!service.create(username, password)) {
+            return renderer.renderRegisterFailed();
+        }
 
         return renderer.renderRegisterSuccess();
     }
