@@ -8,6 +8,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import java.nio.charset.StandardCharsets;
 
 /**
  * htmx 用のユーザー関連 Web エンドポイント。
@@ -52,7 +53,7 @@ public class UserWebResource {
                 || password == null
                 || password.isBlank()
                 || password.length() < 8
-                || password.length() > 72) {
+                || password.getBytes(StandardCharsets.UTF_8).length > 72) {
             return renderer.renderRegisterFailed();
         }
 
