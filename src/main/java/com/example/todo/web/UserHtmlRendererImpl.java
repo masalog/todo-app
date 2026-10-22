@@ -20,7 +20,7 @@ public class UserHtmlRendererImpl
     @Override
     public String renderRegisterSuccess() {
         return """
-            <p>ユーザー登録が完了しました。</p>
+            <p role="status">ユーザー登録が完了しました。</p>
             """;
     }
 
@@ -32,7 +32,7 @@ public class UserHtmlRendererImpl
     @Override
     public String renderRegisterFailed() {
         return """
-            <p>ユーザー名が既に使用されています。</p>
+            <p role="alert">登録できませんでした。入力内容を確認するか、別のユーザー名をお試しください。</p>
             """;
     }
 }
