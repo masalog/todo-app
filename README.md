@@ -262,10 +262,20 @@ mvn test 実行
 
 # 📋 ログ確認
 
-アプリケーションログ:
+本番プロファイルでは HTTP アクセスログが有効です。アプリへのリクエストごとに
+メソッド・パス・ステータスコードなどがコンテナの標準出力に出ます。
+ログイン情報やフォームの内容は出力しません。
+
+アプリケーションログとアクセスログ:
 
 ```bash
 docker compose -f compose.prod.yml logs -f todo-app
+```
+
+設定変更後はイメージを再ビルドして起動してください。
+
+```bash
+docker compose -f compose.prod.yml up -d --build
 ```
 
 PostgreSQLログ:
